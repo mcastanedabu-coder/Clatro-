@@ -307,14 +307,22 @@ int main(){
             barajaPlana.erase(barajaPlana.begin());
             puntaje_c=evaluar(mano_dealer);
         }
+        random_device rd;
+        mt19937 g(rd());
+        uniform_int_distribution<int> distribucion(1,3);
+        int posibilidad = distribucion(g);
+
         if(puntaje_c>=20 && puntaje_c<=21){
-                string res;
-                cout<<"el crupier a subido la apuesta.\n"<<"apuesta actual: "<<apuesta+presupuesto*0.025<<" pagas?. 'y'"<<endl;cin>>res;
-                if(res == "y"){
-                    apuesta+=presupuesto*0.025;
-                }else{
-                    goto pass;
+                if(posibilidad==2){
+                    string res;
+                    cout<<"el crupier a subido la apuesta.\n"<<"apuesta actual: "<<apuesta+presupuesto*0.025<<" pagas?. 'y'"<<endl;cin>>res;
+                    if(res == "y"){
+                        apuesta+=presupuesto*0.025;
+                    }else{
+                        goto pass;
+                    }
                 }
+                
 
             }
 
