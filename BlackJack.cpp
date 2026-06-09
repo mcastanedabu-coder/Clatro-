@@ -241,9 +241,12 @@ int main(){
     //getch();
     barajaPlana=aplanador(cartas_val);
     
-
+    bool flag = false;
     while(barajaPlana.size()>=4){
-        
+        if(flag){
+            apuesta=50;
+        }
+        flag=true;
 
         /*for(int i=0;i<barajaPlana.size();i++){
             cout<<barajaPlana[i]<<" ";
@@ -260,11 +263,12 @@ int main(){
         
         }
         cout<<endl;
-        /*cout<<"mano del crupier: ";
+        //imprime la mano del crupier
+        cout<<"mano del crupier: ";
         for(int i=0;i<mano_dealer.size();i++){
             cout<<mano_dealer[i]<<" ";
         
-        }*/
+        }
     
         // tomar mas cartas
         int puntaje_p=evaluar(mano);
@@ -282,34 +286,46 @@ int main(){
             if(barajaPlana.empty()){
                 break;
             }
+            
             mano_dealer.push_back(*barajaPlana.begin());
             barajaPlana.erase(barajaPlana.begin());
             puntaje_c=evaluar(mano_dealer);
         }
+        if(puntaje_c>=20 && puntaje_c<=21){
+                cout<<"el crupier a subido la apuesta.\n"<<"apuesta actual: "<<apuesta+presupuesto*0.025<<endl;
+                apuesta+=presupuesto*0.025;
+            }
+
+
         /*for(string s:mano_dealer){
             cout<<s<<" ";
         }*/
+        
         cout<<endl<<"crupier puntaje: "<<puntaje_c<<endl;
         if(21-puntaje_p<0 && 21-puntaje_c<0){
             cout<<"empate, no cambia tu balance."<<endl;
-            cout<<"balance: "<<presupuesto<<endl;    
+            cout<<"balance: "<<presupuesto<<endl;
         }else if(puntaje_c==puntaje_p){
             cout<<"empate, no cambia tu balance."<<endl;
             cout<<"balance: "<<presupuesto<<endl;
         }else if(21-puntaje_p<0){
             cout<<"la casa gana, pierdes tu apuesta"<<endl;
             cout<<"balance: "<<presupuesto-apuesta<<endl;
+            presupuesto-=apuesta;
         }else if(21-puntaje_c<0){
             cout<<"tu ganas, te llevas la apuesta de la casa!!"<<endl;
             cout<<"balance: "<<presupuesto+apuesta<<endl;
+            presupuesto+=apuesta;
         }else if(21-puntaje_c<21-puntaje_p){
             cout<<"la casa gana, pierdes tu apuesta"<<endl;
             cout<<"balance: "<<presupuesto-apuesta<<endl;
+            presupuesto-=apuesta;
         }else{
             cout<<"tu ganas, te llevas la apuesta de la casa!!"<<endl;
             cout<<"balance: "<<presupuesto+apuesta<<endl;
+            presupuesto+=apuesta;
         }
-
+        
         getch();
         mano.clear();
         mano_dealer.clear();
