@@ -10,6 +10,10 @@
 
 using namespace std;
 
+int apuestaEfectiva(int apuesta){
+    return 0;
+}
+
 vector<string> aces(vector<string>& arr){
     vector<string> arr2,arr3;
     for(int i=0;i<arr.size();i++){
@@ -185,6 +189,31 @@ int main(){
     vector<string> mano;
     vector<string> mano_dealer;
 
+    //Ajustar monto inicial
+    invalidModeInput:
+    int presupuesto;
+    cout<<"decide el modo de juego: \n"<<"1.Corto ($100) 2.largo ($300) 3.Muy largo($1000)\n";cin>>presupuesto;   
+    
+    switch (presupuesto)
+    {
+    case 1:
+        presupuesto=100;
+        break;
+    case 2:
+        presupuesto=300;
+        break;
+    case 3:
+        presupuesto=1000;
+        break;
+    default:
+        cout<<"modo invalido, porfavor elegir un numero entre 1, 2 y 3\n";
+        goto invalidModeInput;
+        break;
+    }
+
+    cout<<"La apuesta minima es el 5%"<<" de tu bankroll\n\n"<<"---> $"<<presupuesto*0.05<<"\n";
+    int apuesta=presupuesto*0.05;
+
     remezcleo:
     array<array<string,14>,4> cartas_val={{
         {"A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","AJ","AQ","AK","AZ"},
@@ -262,17 +291,23 @@ int main(){
         }*/
         cout<<endl<<"crupier puntaje: "<<puntaje_c<<endl;
         if(21-puntaje_p<0 && 21-puntaje_c<0){
-            cout<<"empate "<<endl;
+            cout<<"empate, no cambia tu balance."<<endl;
+            cout<<"balance: "<<presupuesto<<endl;    
         }else if(puntaje_c==puntaje_p){
-            cout<<"empate "<<endl;
+            cout<<"empate, no cambia tu balance."<<endl;
+            cout<<"balance: "<<presupuesto<<endl;
         }else if(21-puntaje_p<0){
-            cout<<"la casa gana "<<endl;
+            cout<<"la casa gana, pierdes tu apuesta"<<endl;
+            cout<<"balance: "<<presupuesto-apuesta<<endl;
         }else if(21-puntaje_c<0){
-            cout<<"tu ganas "<<endl;
+            cout<<"tu ganas, te llevas la apuesta de la casa!!"<<endl;
+            cout<<"balance: "<<presupuesto+apuesta<<endl;
         }else if(21-puntaje_c<21-puntaje_p){
-            cout<<"la casa gana "<<endl;
+            cout<<"la casa gana, pierdes tu apuesta"<<endl;
+            cout<<"balance: "<<presupuesto-apuesta<<endl;
         }else{
-            cout<<"tu ganas "<<endl;
+            cout<<"tu ganas, te llevas la apuesta de la casa!!"<<endl;
+            cout<<"balance: "<<presupuesto+apuesta<<endl;
         }
 
         getch();
