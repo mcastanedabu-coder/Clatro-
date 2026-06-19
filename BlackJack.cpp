@@ -403,6 +403,100 @@ void revisarLoopMusica(){
 	}
 }
 
+//Función única que guarda historial, punto de guardado y muestra menú de opciones
+//Devuelve: 0=continuar, 1=reset, 2=guardar y continuar, 3=guardar y salir, 4=salir
+int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta, 
+                               int puntajeJug, int puntajeCrup, 
+                               double saldoAntes, double saldoDespues){
+	
+	//PARTE 1: Guardar historial en txt
+	fstream historialFile;
+	historialFile.open("historial.txt", ios::out | ios::app);
+	if(historialFile.is_open()){
+		time_t now = time(nullptr);
+		tm* local_time = localtime(&now);
+		char buffer[20];
+		strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", local_time);
+		
+		string nombreMesa = "";
+		if(mesaNum == 1) nombreMesa = "Mesa Corta ($100)";
+		else if(mesaNum == 2) nombreMesa = "Mesa Mediana ($300)";
+		else if(mesaNum == 3) nombreMesa = "Mesa Larga ($1000)";
+		
+		historialFile<<"Fecha/Hora : "<<buffer<<endl;
+		historialFile<<"Mesa       : "<<nombreMesa<<endl;
+		historialFile<<"Partida N\xb0 : "<<numeroPartida<<endl;
+		historialFile<<"Apuesta    : $"<<apuesta<<endl;
+		historialFile<<"Puntaje Jug.: "<<puntajeJug<<endl;
+		historialFile<<"Puntaje Cru.: "<<puntajeCrup<<endl;
+		historialFile<<"Balance ant.: $"<<saldoAntes<<endl;
+		historialFile<<"Balance des.: $"<<saldoDespues<<endl;
+		historialFile<<"--------------------------------------------"<<endl;
+		historialFile.close();
+	}
+	
+	//PARTE 2: Mostrar menú de opciones (misma lógica que opcionesGenerales)
+	int opcion = 0;
+	while(true){
+		cout<<"Que desea hacer?\n";
+		cout<<"\t1. Continuar la partida\n";
+		cout<<"\t2. Resetear Juego \n";
+		cout<<"\t3. Guardar la partida y Continuar\n";
+		cout<<"\t4. Guardar y salir\n";
+		cout<<"\t5. Salir\n";
+		cout<<endl<<"Digite su opcion: ";
+		cin>>opcion;
+		
+		if(cin.fail()){
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout<<endl<<"Entrada invalida. Ingrese un NUMERO o una opcion VALIDA"<<endl<<endl;
+			continue;
+		}
+		cin.ignore(10000, '\n');
+		
+		if(opcion < 1 || opcion > 5){
+			cout<<endl<<"Entrada invalida. Ingrese un NUMERO o una opcion VALIDA"<<endl<<endl;
+			continue;
+		}
+		
+		//PARTE 3: Guardar punto de guardado si es necesario
+		if(opcion == 3 || opcion == 4){
+			ofstream saveFile("saveFile.txt");
+			fstream recordFile;
+			recordFile.open("gameRecords.txt", ios::out | ios::app);
+			if(recordFile.is_open()){
+				time_t now2 = time(nullptr);
+				tm* local_time2 = localtime(&now2);
+				char buffer2[11];
+				strftime(buffer2, sizeof(buffer2), "%Y/%m/%d", local_time2);
+				
+				recordFile<<"Saldo: "<<(int)saldoDespues<<" - Fecha: "<<buffer2;
+				saveFile<<"Saldo: "<<(int)saldoDespues<<" - Fecha: "<<buffer2;
+				
+				char time_string[9];
+				strftime(time_string, sizeof(time_string), "%X", local_time2);
+				
+				recordFile<<" - Hora: "<<time_string<<endl;
+				saveFile<<" - Hora: "<<time_string<<endl;
+				recordFile.close();
+			}
+			cout<<"El juego se ha guardado con exito\n\n";
+			
+			if(opcion == 4){
+				this_thread::sleep_for(chrono::milliseconds(2000));
+			}
+		}
+		
+		//PARTE 4: Devolver opción según acción
+		if(opcion == 1) return 0;      //Continuar
+		else if(opcion == 2) return 1; //Reset
+		else if(opcion == 3) return 2; //Guardar y continuar
+		else if(opcion == 4) return 3; //Guardar y salir
+		else if(opcion == 5) return 4; //Salir
+	}
+}
+
 int main(){
 	reproducirMusica();
 	int saldo = 0;
@@ -449,6 +543,7 @@ int main(){
 	    //Ajustar monto inicial
 	    invalidModeInput:
 	    int input = menuMesa();
+	    int numeroPartida = 0;  //Contador para historial
 	    double presupuesto; 
 	    switch (input){
 		    case 1:
@@ -630,6 +725,16 @@ int main(){
 	                goto game_over;
 	            }            
 	        }
+	            numeroPartida++;
+	            double saldoAntesRonda = presupuesto + apuesta;
+	            int resultadoMenu = guardarHistorialYOpciones(input, numeroPartida, apuesta, 
+	                                                          puntaje_p, evaluar(mano_dealer),
+	                                                          saldoAntesRonda, presupuesto);
+	            if(resultadoMenu == 1){
+	                goto invalidModeInput;
+	            } else if(resultadoMenu == 3 || resultadoMenu == 4){
+	                goto game_over;
+	            }
 	            mano.clear();
 	            mano_dealer.clear();
 	            continue;
@@ -681,6 +786,32 @@ int main(){
 	        }
 	        
 	        revisarLoopMusica();
+	        
+	        //Guardar historial y mostrar menú de opciones
+	        numeroPartida++;
+	        double saldoAntesRonda = presupuesto;
+	        //Calcular saldo antes basado en los cambios realizados
+	        if((21-puntaje_p<0 && 21-puntaje_c<0) || puntaje_c==puntaje_p){
+	            saldoAntesRonda = presupuesto; //Empate, sin cambio
+	        } else if(21-puntaje_p<0){
+	            saldoAntesRonda = presupuesto + apuesta;
+	        } else if(21-puntaje_c<0){
+	            saldoAntesRonda = presupuesto - apuesta;
+	        } else if(21-puntaje_c<21-puntaje_p){
+	            saldoAntesRonda = presupuesto + apuesta;
+	        } else {
+	            saldoAntesRonda = presupuesto - apuesta;
+	        }
+	        
+	        int resultadoMenu = guardarHistorialYOpciones(input, numeroPartida, apuesta,
+	                                                      puntaje_p, puntaje_c,
+	                                                      saldoAntesRonda, presupuesto);
+	        
+	        if(resultadoMenu == 1){
+	            goto invalidModeInput;
+	        } else if(resultadoMenu == 3 || resultadoMenu == 4){
+	            goto game_over;
+	        }
 	        
 	        if(presupuesto<ap_minima){
 	            cout<<"\nYa no tienes dinero :O,   q mal :c\n";
