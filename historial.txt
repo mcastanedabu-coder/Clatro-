@@ -1,0 +1,32 @@
+Fecha/Hora : 2026-06-19 22:24:28
+Mesa       : Mesa Corta ($100)
+Apuesta    : $200
+Puntaje Jug.: 18
+Puntaje Cru.: 21
+Balance ant.: $300
+Balance des.: $100
+--------------------------------------------
+Fecha/Hora : 2026-06-19 22:24:56
+Mesa       : Mesa Corta ($100)
+Apuesta    : $20
+Puntaje Jug.: 22
+Puntaje Cru.: 14
+Balance ant.: $100
+Balance des.: $80
+--------------------------------------------
+Fecha/Hora : 2026-06-19 22:25:54
+Mesa       : Mesa Corta ($100)
+Apuesta    : $20
+Puntaje Jug.: 20
+Puntaje Cru.: 20
+Balance ant.: $80
+Balance des.: $80
+--------------------------------------------
+Fecha/Hora : 2026-06-19 22:26:12
+Mesa       : Mesa Corta ($100)
+Apuesta    : $20
+Puntaje Jug.: 21
+Puntaje Cru.: 17
+Balance ant.: $80
+Balance des.: $100
+--------------------------------------------

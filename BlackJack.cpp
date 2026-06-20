@@ -131,7 +131,7 @@ int menuMesa(){
 			}
 				
 			case 3:{
-				cout<<"\nHas elegido la mesa larga -------- Saldo de la Mesa: $500\n\n";
+				cout<<"\nHas elegido la mesa larga -------- Saldo de la Mesa: $1000\n\n";
 				this_thread::sleep_for(chrono::milliseconds(5000));
 				cout<<"\033[2J\033[3J\033[H"<<flush;
 				return 3;
@@ -171,15 +171,15 @@ int evaluar(vector<string> arr){
             switch (s[0])
             {
             case 'Z':
-                if(21-val_p<=11){
-                    val_p+=1;
+                if(val_p + 11 <= 21){
+                    val_p += 11;
                 }
                 else{
-                    val_p+=11;
+                    val_p += 1;
                 }
                 break;
             default:
-                val_p+=10;
+                val_p += 10;
                 break;
             }
         }
@@ -188,27 +188,37 @@ int evaluar(vector<string> arr){
 }
 
 vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,double& apuesta,double pres) {
+	string entrada;
     char comp;
-    cout <<endl<<"Desea tomar otra carta? 'y'\nO desea doblar? 'd' \nDigite su respuesta: ";
+    cout<<endl<<"Desea tomar otra carta? 'Y'\nDesea doblar? 'D'\nDesea no tomar mas cartas? Digite cualquier letra\nDigite su respuesta: ";
     bool x=false;
     while (true) {
         if(x){
-            cout <<endl<<"Desea tomar otra carta? 'y' \nDigite su respuesta: ";
+            cout <<endl<<"Desea tomar otra carta? 'Y'\nDesea doblar? 'D'\nDesea no tomar mas cartas? Digite cualquier letra\nDigite su respuesta: ";
         }
         
-        
-        if(!(cin>>comp)){
+        if(!(cin>>entrada)){
             cin.clear();
             cin.ignore(10000, '\n');
             cout<<"Entrada invalida.\n";
             continue;
         }
-        if(comp=='d' && x){
+        cin.ignore(10000, '\n');
+        
+        if (entrada.length() > 1) {
+            cout << "\nEntrada invalida. Por favor, digite solo UNA letra ('Y' o 'D').\n";
+            continue;
+        }
+        
+        comp = toupper(entrada[0]);
+        
+        if(comp == 'D' && x){
             cout<<"\nNo puedes doblar!";
             continue;
         }
-        x=true;
-
+        
+        x = true;
+        
         if (comp == conf) {
 
             if (arr.empty()) {
@@ -218,8 +228,7 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
 
             arr2.push_back(arr.front()); // primera carta
             arr.erase(arr.begin());      // eliminarla del mazo
-        }
-        else if(comp == 'd'){
+        } else if(comp == 'D'){
             if(arr.empty()){
                 cout << "No quedan cartas.\n";
                 break;
@@ -231,49 +240,49 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
             arr2.push_back(arr.front()); 
             arr.erase(arr.begin());
             apuesta*=2;
-            
+            cout<<"\nHaz doblado. Tu carta final ha sido agregada.\n";
+            break;
         }
         else {
             break;
         }
-        cout<<"\nTu mano es: ";
+        cout<<"\nTu mano es: \n";
         for(string s:arr2){
             switch (s[0])
             {
             case 'A':
                 if(s[1]=='Z'){
-                    cout<<"A"<<" de corazones ";
+                    cout<<"A"<<" de corazones \n";
                 }else{
-                    cout<<s.substr(1)<<" de corazones ";
+                    cout<<s.substr(1)<<" de corazones \n";
                 }
                 break;
             case 'B':
                 if(s[1]=='Z'){
-                    cout<<"A"<<" de diamantes ";
+                    cout<<"A"<<" de diamantes \n";
                 }else{
-                    cout<<s.substr(1)<<" de diamantes ";
+                    cout<<s.substr(1)<<" de diamantes \n";
                 }
                 break;
             case 'C':
                 if(s[1]=='Z'){
-                    cout<<"A"<<" de picas ";
+                    cout<<"A"<<" de picas \n";
                 }else{
-                    cout<<s.substr(1)<<" de picas ";
+                    cout<<s.substr(1)<<" de picas \n";
                 }
                 break;
             case 'D':
                 if(s[1]=='Z'){
-                    cout<<"A"<<" de treboles ";
+                    cout<<"A"<<" de treboles \n";
                 }else{
-                    cout<<s.substr(1)<<" de treboles ";
+                    cout<<s.substr(1)<<" de treboles \n";
                 }
                 break;
             default:
                 break;
             }
-        //cout<<s<<" ";
         }
-        cout<<"y tu puntaje: "<<evaluar(arr2)<<endl;
+        cout<<"\nTu puntaje es: "<<evaluar(arr2)<<endl;
         if(evaluar(arr2)>21){
             break;
         }
@@ -288,10 +297,9 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
 
 vector<string> pasarMano(vector<string>& arr){
     vector<string> arr2;
-    for(int i=0;i<2;i++){
-        arr2.push_back(arr[i]);
-        
-    }
+    arr2.push_back(arr[0]);
+    arr2.push_back(arr[1]);
+    
     arr.erase(arr.begin());
     arr.erase(arr.begin());
     return arr2;
@@ -312,15 +320,9 @@ array<array<string,13>,4> constructor(vector<string> base){
 
 vector<string> mezclador(vector<string> plano){
     random_device rd;
-
-    auto t = chrono::high_resolution_clock::now()
-                 .time_since_epoch()
-                 .count();
-
+    unsigned t = chrono::high_resolution_clock::now().time_since_epoch().count();
     mt19937 g(rd() ^ t);
-
     shuffle(plano.begin(), plano.end(), g);
-
     return plano;
 }
 
@@ -332,7 +334,6 @@ vector<string> aplanador(array<array<string,13>,4> cartas) {
         }
     }
     return cartas_lineal;
-
 }
 
 array<array<string,13>,4> aleatorizador(array<array<string,13>,4> orden){
@@ -403,7 +404,7 @@ void revisarLoopMusica(){
 	}
 }
 
-//FunciÃ³n Ãºnica que guarda historial, punto de guardado y muestra menÃº de opciones
+//Función que guarda historial, punto de guardado y muestra menú de opciones
 //Devuelve: 0=continuar, 1=reset, 2=guardar y continuar, 3=guardar y salir, 4=salir
 int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta, 
                                int puntajeJug, int puntajeCrup, 
@@ -425,7 +426,6 @@ int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta,
 		
 		historialFile<<"Fecha/Hora : "<<buffer<<endl;
 		historialFile<<"Mesa       : "<<nombreMesa<<endl;
-		historialFile<<"Partida N\xb0 : "<<numeroPartida<<endl;
 		historialFile<<"Apuesta    : $"<<apuesta<<endl;
 		historialFile<<"Puntaje Jug.: "<<puntajeJug<<endl;
 		historialFile<<"Puntaje Cru.: "<<puntajeCrup<<endl;
@@ -531,8 +531,64 @@ int main(){
 			
 		} while (opcion != 1 && opcion != 2 && opcion != 3);
 		
-		if (menuOpciones(opcion) == 0){
+		
+		
+		if (opcion == 3){
+			menuOpciones(opcion);
 			return 0;
+		}
+		
+		menuOpciones(opcion);
+		double presupuesto = 0;
+		int puntaje_c = 0;
+			
+		if (opcion == 2){
+			presupuesto = 0;
+    		ifstream loadFile("saveFile.txt");
+    
+		    if(!loadFile) {
+		        cout << "Error: No se encontro un archivo de guardado (saveFile.txt).\n";
+		        cout << "Iniciando con mesa pequeña por defecto...\n";
+		        opcion = 1; 
+		    } else {
+		        string line, etiqueta;
+		        int saveSaldo;
+		        getline(loadFile, line);
+		        stringstream data(line);
+		        data >> etiqueta >> saveSaldo;
+		        presupuesto = saveSaldo;
+		        loadFile.close();
+		        if (presupuesto < 5){ // 5 es el mínimo para poder apostar el 5% de 100
+					cout << "El archivo de guardado registra un saldo insuficiente ($" << presupuesto << ").\n";
+					cout << "Redireccionando a la seleccion de mesa...\n";
+					this_thread::sleep_for(chrono::milliseconds(2500));
+					opcion = 1; // Lo forzamos a elegir mesa nueva
+		    	}
+			}
+		}
+		
+		double apuesta = presupuesto*0.05;
+	    double ap_minima = presupuesto*0.05;
+		
+		invalidModeInput:
+			
+		if (opcion == 1 || presupuesto < ap_minima){
+		    int input = menuMesa();
+		    presupuesto = 0;
+		    switch (input){
+			    case 1:
+			        presupuesto = 100;
+			        break;
+			    case 2:
+			        presupuesto = 300;
+			        break;
+			    case 3:
+			        presupuesto = 1000;
+			        break;
+			}
+			
+			apuesta = presupuesto * 0.05;
+			ap_minima = presupuesto * 0.05;
 		}
 		
 		//Saldo Inicial
@@ -541,25 +597,8 @@ int main(){
 	    vector<string> mano_dealer;
 	
 	    //Ajustar monto inicial
-	    invalidModeInput:
-	    int input = menuMesa();
-	    int numeroPartida = 0;  //Contador para historial
-	    double presupuesto; 
-	    switch (input){
-		    case 1:
-		        presupuesto=100;
-		        break;
-		    case 2:
-		        presupuesto=300;
-		        break;
-		    case 3:
-		        presupuesto=1000;
-		        break;
-		}
 		
-	    cout<<"La apuesta minima es el 5%"<<" de tu bankroll ($"<<presupuesto<<") ---> $"<<presupuesto*0.05<<"\n\n";
-	    double apuesta=presupuesto*0.05;
-	    double ap_minima=presupuesto*0.05;
+	    cout<<"La apuesta minima es el 5%"<<" de tu bankroll ($"<<presupuesto<<") ---> $"<<ap_minima<<"\n\n";
 	    remezcleo:
 	    array<array<string,13>,4> cartas_val={{
 	        {"A2","A3","A4","A5","A6","A7","A8","A9","A10","AJ","AQ","AK","AZ"},
@@ -567,87 +606,67 @@ int main(){
 	        {"C2","C3","C4","C5","C6","C7","C8","C9","C10","CJ","CQ","CK","CZ"},
 	        {"D2","D3","D4","D5","D6","D7","D8","D9","D10","DJ","DQ","DK","DZ"}
 	    }};
-		// aleatorizar mazo
-	    /*for(int i=0;i<4;i++){
-	        for(int j=0;j<14;j++){
-	            cout<<cartas_val[i][j]<<',';
-	        }
-	        cout<<endl;
-	    }
-	    cout<<"\n"<<"\n"<<"\n";*/
+		
 	    cartas_val = aleatorizador(cartas_val);
-	
-	    /*for(int i=0;i<4;i++){
-	        for(int j=0;j<14;j++){
-	            cout<<cartas_val[i][j]<<',';
-	        }
-	        cout<<endl;
-	    }
-	    cout<<"\n"<<"\n"<<"\n";*/
-	    //getch();
-	    barajaPlana=aplanador(cartas_val);
+	    barajaPlana = aplanador(cartas_val);
 	    
 	    bool flag = false;
 	    while(barajaPlana.size()>=4){
 	    	revisarLoopMusica();
-	        if(flag){
-	            x:
-	            cout<<"Cuanto apuestas a esta ronda? \nDigite su apuesta: $";
-	            if(!(cin>>apuesta)){
-	                cin.clear();
-	                cin.ignore(10000, '\n');
-	                cout<<"entrada invalida.\n";
-	                goto x;
-	            }
-	            if(apuesta>presupuesto || apuesta<ap_minima){
-	                cout<<"monto invalido!!\n";
-	                goto x;
-	            }
+	    	
+	        pedir_apuesta:
+			cout<<"Cuanto apuestas a esta ronda? \nDigite su apuesta: $";
+	        if(!(cin>>apuesta)){
+	            cin.clear();
+	            cin.ignore(10000, '\n');
+	            cout<<"Entrada invalida.\n";
+	            goto pedir_apuesta;
 	        }
-	        flag=true;
+	    	if(apuesta > presupuesto || apuesta < ap_minima){
+	            cout<<"Monto invalido (no tienes suficiente dinero o es menor al minimo)!!\n";
+	            cin.ignore(10000, '\n');
+	            goto pedir_apuesta;
+	        }
+	        cin.ignore(10000, '\n');
+	        
+	        flag = true;
 	        
 	        cout<<endl;
 	        revisarLoopMusica();
-	
-	        /*for(int i=0;i<barajaPlana.size();i++){
-	            cout<<barajaPlana[i]<<" ";
-	        }
-	        cout<<endl;*/
-	
-	    
-	        mano=pasarMano(barajaPlana);
+			
+			mano=pasarMano(barajaPlana);
 	        mano_dealer=pasarMano(barajaPlana);
 	
-	        cout<<"Tu mano: ";
+	        cout<<"Tu mano: \n";
 	        for(int i=0;i<mano.size();i++){
 	            switch (mano[i][0])
 	            {
 	            case 'A':
 	                if(mano[i][1]=='Z'){
-	                    cout<<"A"<<" de corazones ";
+	                    cout<<"A"<<" de corazones \n";
 	                }else{
-	                    cout<<mano[i].substr(1)<<" de corazones ";
+	                    cout<<mano[i].substr(1)<<" de corazones \n";
 	                }
 	                break;
 	            case 'B':
 	                if(mano[i][1]=='Z'){
-	                    cout<<"A"<<" de diamantes ";
+	                    cout<<"A"<<" de diamantes \n";
 	                }else{
-	                    cout<<mano[i].substr(1)<<" de diamantes ";
+	                    cout<<mano[i].substr(1)<<" de diamantes \n";
 	                }
 	                break;
 	            case 'C':
 	                if(mano[i][1]=='Z'){
-	                    cout<<"A"<<" de picas ";
+	                    cout<<"A"<<" de picas \n";
 	                }else{
-	                    cout<<mano[i].substr(1)<<" de picas ";
+	                    cout<<mano[i].substr(1)<<" de picas \n";
 	                }
 	                break;
 	            case 'D':
 	                if(mano[i][1]=='Z'){
-	                    cout<<"A"<<" de treboles ";
+	                    cout<<"A"<<" de treboles \n";
 	                }else{
-	                    cout<<mano[i].substr(1)<<" de treboles ";
+	                    cout<<mano[i].substr(1)<<" de treboles \n";
 	                }
 	                break;
 	            default:
@@ -663,160 +682,112 @@ int main(){
 	            {
 	            case 'A':
 	                if(mano_dealer[1][1]=='Z'){
-	                    cout<<endl<<"Carta visible del crupier: "<<"A"<<" de corazones \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<"A"<<" de corazones \n";
 	                }else{
-	                    cout<<endl<<"Carta visible del crupier: "<<mano_dealer[1].substr(1)<<" de corazones \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<mano_dealer[1].substr(1)<<" de corazones \n";
 	                }
 	                break;
 	            case 'B':
 	                if(mano_dealer[1][1]=='Z'){
-	                    cout<<endl<<"Carta visible del crupier: "<<"A"<<" de diamantes \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<"A"<<" de diamantes \n";
 	                }else{
-	                    cout<<endl<<"Carta visible del crupier: "<<mano_dealer[1].substr(1)<<" de diamantes \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<mano_dealer[1].substr(1)<<" de diamantes \n";
 	                }
 	                break;
 	            case 'C':
 	                if(mano_dealer[1][1]=='Z'){
-	                    cout<<endl<<"Carta visible del crupier: "<<"A"<<" de picas \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<"A"<<" de picas \n";
 	                }else{
-	                    cout<<endl<<"Carta visible del crupier: "<<mano_dealer[1].substr(1)<<" de picas \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<mano_dealer[1].substr(1)<<" de picas \n";
 	                }
 	                break;
 	            case 'D':
 	                if(mano_dealer[1][1]=='Z'){
-	                    cout<<endl<<"Carta visible del crupier: "<<"A"<<" de treboles \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<"A"<<" de treboles \n";
 	                }else{
-	                    cout<<endl<<"Carta visible del crupier: "<<mano_dealer[1].substr(1)<<" de treboles \n";
+	                    cout<<endl<<"Carta visible del crupier: \n"<<mano_dealer[1].substr(1)<<" de treboles \n";
 	                }
 	                break;
 	            default:
 	                break;
 	            }
-	        //cout<<endl<<"Carta visible del crupier: "<<mano_dealer[1]<<endl;
-	        //imprime la mano del crupier
-	        /*cout<<"mano del crupier: ";
-	        for(int i=0;i<mano_dealer.size();i++){
-	            cout<<mano_dealer[i]<<" ";
-	        
-	        }*/
 	    
 	        // tomar mas cartas
 	        revisarLoopMusica();
 	        int puntaje_p=evaluar(mano);
-	        cout<<"Tu puntaje: "<<puntaje_p<<endl;
+	        cout<<"\nTu puntaje: "<<puntaje_p<<endl;
 	
-	        mano=tomarCartas(barajaPlana,'y',mano, apuesta,presupuesto);
+	        mano=tomarCartas(barajaPlana,'Y',mano, apuesta,presupuesto);
 	        
 	        //evaluar puntajes
 	
-	        puntaje_p=evaluar(mano);
+	        puntaje_p = evaluar(mano);
+	        
+	        puntaje_c = evaluar(mano_dealer);
+	        
 	        if(puntaje_p>21){
-	            cout<<"La casa gana, pierdes tu apuesta, que es de: "<<apuesta<<endl;
-	            cout<<"Balance: $"<<presupuesto-apuesta<<endl;
-	            presupuesto-=apuesta;
-	            if(presupuesto<ap_minima){
-	            cout<<"\nYa no tienes dinero :O,   q mal :c\n";
-	            string a;
-	            cout<<"\nQuieres volver a empezar? 'y'";cin>>a;
-	            if(a=="y"){
-	                goto invalidModeInput;
-	            }else{
-	                cout<<"Juego terminado.";
-	                goto game_over;
-	            }            
-	        }
-	            numeroPartida++;
-	            double saldoAntesRonda = presupuesto + apuesta;
-	            int resultadoMenu = guardarHistorialYOpciones(input, numeroPartida, apuesta, 
-	                                                          puntaje_p, evaluar(mano_dealer),
-	                                                          saldoAntesRonda, presupuesto);
-	            if(resultadoMenu == 1){
-	                goto invalidModeInput;
-	            } else if(resultadoMenu == 3 || resultadoMenu == 4){
-	                goto game_over;
-	            }
-	            mano.clear();
-	            mano_dealer.clear();
-	            continue;
-	        }
-	        
-	        revisarLoopMusica();
-	        
-	        int puntaje_c=evaluar(mano_dealer);
-	        while(puntaje_c<17){
-	            if(barajaPlana.empty()){
-	                break;
-	            }
-	            
-	            mano_dealer.push_back(*barajaPlana.begin());
-	            barajaPlana.erase(barajaPlana.begin());
-	            puntaje_c=evaluar(mano_dealer);
-	        }
-	
-	
-	        /*for(string s:mano_dealer){
-	            cout<<s<<" ";
-	        }*/
-	        
-	        revisarLoopMusica();
-	        
-	        cout<<endl<<"Crupier puntaje: "<<puntaje_c<<endl;
-	        if(21-puntaje_p<0 && 21-puntaje_c<0){
-	            cout<<"Empate, no cambia tu balance."<<endl;
-	            cout<<"Balance: $"<<presupuesto<<endl;
-	        }else if(puntaje_c==puntaje_p){
-	            cout<<"Empate, no cambia tu balance."<<endl;
-	            cout<<"Balance: $"<<presupuesto<<endl;
-	        }else if(21-puntaje_p<0){
-	            cout<<"La casa gana, pierdes tu apuesta, que es de: "<<apuesta<<endl;
-	            cout<<"Balance: $"<<presupuesto-apuesta<<endl;
-	            presupuesto-=apuesta;
-	        }else if(21-puntaje_c<0){
-	            cout<<"Tu ganas, te llevas la apuesta de la casa!!, que es de: "<<apuesta<<endl;
-	            cout<<"Balance: $"<<presupuesto+apuesta<<endl;
-	            presupuesto+=apuesta;
-	        }else if(21-puntaje_c<21-puntaje_p){
-	            cout<<"La casa gana, pierdes tu apuesta, que es de: "<<apuesta<<endl;
-	            cout<<"Balance: $"<<presupuesto-apuesta<<endl;
-	            presupuesto-=apuesta;
-	        }else{
-	            cout<<"Tu ganas, te llevas la apuesta de la casa!!, que es de: "<<apuesta<<endl;
-	            cout<<"Balance: $"<<presupuesto+apuesta<<endl;
-	            presupuesto+=apuesta;
-	        }
-	        
-	        revisarLoopMusica();
-	        
-	        //Guardar historial y mostrar menÃº de opciones
-	        numeroPartida++;
-	        double saldoAntesRonda = presupuesto;
-	        //Calcular saldo antes basado en los cambios realizados
-	        if((21-puntaje_p<0 && 21-puntaje_c<0) || puntaje_c==puntaje_p){
-	            saldoAntesRonda = presupuesto; //Empate, sin cambio
-	        } else if(21-puntaje_p<0){
-	            saldoAntesRonda = presupuesto + apuesta;
-	        } else if(21-puntaje_c<0){
-	            saldoAntesRonda = presupuesto - apuesta;
-	        } else if(21-puntaje_c<21-puntaje_p){
-	            saldoAntesRonda = presupuesto + apuesta;
+	            if((presupuesto - apuesta) < ap_minima){
+	            	cout<<"La casa gana, pierdes tu apuesta, que es de: $"<<apuesta<<endl;
+	            	double saldoFinal = presupuesto - apuesta;
+	            	cout<<"Balance: $"<<saldoFinal<<endl;
+	            	cout<<"\nYa no tienes dinero :O, q mal :c\n";
+	            	guardarHistorialYOpciones(1, 1, apuesta, puntaje_p, puntaje_c, presupuesto, saldoFinal);
+	            	string a;
+	            	cout<<"\nQuieres volver a empezar? 'Y'";
+					cin>>a;
+	            	if(a == "Y" || a == "y"){
+	                	goto invalidModeInput;
+	            	} else{
+	                	cout<<"Juego terminado.";
+	                	goto game_over;
+	            	}            
+	        	}
 	        } else {
-	            saldoAntesRonda = presupuesto - apuesta;
-	        }
+	        	revisarLoopMusica();
+	        	while(puntaje_c<17){
+		            if(barajaPlana.empty()){
+		                break;
+		            }
+		            mano_dealer.push_back(*barajaPlana.begin());
+		            barajaPlana.erase(barajaPlana.begin());
+		            puntaje_c=evaluar(mano_dealer);
+		        }	
+			}
+			
+	        revisarLoopMusica();
 	        
-	        int resultadoMenu = guardarHistorialYOpciones(input, numeroPartida, apuesta,
-	                                                      puntaje_p, puntaje_c,
-	                                                      saldoAntesRonda, presupuesto);
+	        cout << endl << "Puntaje del Crupier: " << puntaje_c << endl;
 	        
-	        if(resultadoMenu == 1){
-	            goto invalidModeInput;
-	        } else if(resultadoMenu == 3 || resultadoMenu == 4){
-	            goto game_over;
+		    double saldoAnterior = presupuesto; 
+	
+	        if (puntaje_p > 21) {
+	            cout << "Te pasaste de 21. La casa gana, pierdes tu apuesta de: $" << apuesta << endl;
+	            presupuesto -= apuesta;
+	        } 
+	        else if (puntaje_c > 21) {
+	            cout << "El crupier se paso de 21! Tu ganas la apuesta de la casa: $" << apuesta << endl;
+	            presupuesto += apuesta;
 	        }
+		    else if (puntaje_p == puntaje_c) {
+		        cout << "Empate, ambos tienen el mismo puntaje. No cambia tu balance." << endl;
+		    } 
+		    else if (puntaje_p > puntaje_c) {
+		        cout << "Tu ganas!! Te llevas la apuesta de la casa: $" << apuesta << endl;
+		        presupuesto += apuesta;
+		    } 
+		    else {
+		        cout << "La casa gana, pierdes tu apuesta de: $" << apuesta << endl;
+		        presupuesto -= apuesta;
+		    }
+		
+		    cout << "Balance actual: $" << presupuesto << endl << endl;
+	        
+	        revisarLoopMusica();
 	        
 	        if(presupuesto<ap_minima){
 	            cout<<"\nYa no tienes dinero :O,   q mal :c\n";
 	            string a;
-	            cout<<"\nQuieres volver a empezar? 'y'";
+	            cout<<"\nQuieres volver a empezar? 'Y'";
 	            entradaInvalida:
 	            if(!(cin>>a)){
 	                cin.clear();
@@ -824,7 +795,7 @@ int main(){
 	                cout<<"Entrada invalida.\n";
 	                goto entradaInvalida;
 	            }
-	            if(a=="y"){
+	            if(a == "y" || a == "Y"){
 	                goto invalidModeInput;
 	            }else{
 	                cout<<"Juego terminado.";
@@ -834,18 +805,33 @@ int main(){
 	        
 	        revisarLoopMusica();
 	        
-	        getch();
+			int accionPartida = guardarHistorialYOpciones(1, 1, apuesta, puntaje_p, puntaje_c, saldoAnterior, presupuesto);        
+			
+	        if (accionPartida == 1) { // Opción 2 del menú: Resetear Juego
+	        	cout<<"\033[2J\033[3J\033[H"<<flush;
+	            goto invalidModeInput;
+	        } 
+	        else if (accionPartida == 3 || accionPartida == 4) { // Guardar y salir, o Salir directamente
+	            cout << "Regresando al menu principal...\n";
+	            this_thread::sleep_for(chrono::milliseconds(1500));
+	            cout<<"\033[2J\033[3J\033[H"<<flush;
+	            break; // Rompe el bucle de la partida y vuelve al menú de inicio del juego
+	        }
+	        
 	        mano.clear();
 	        mano_dealer.clear();
 	    }
 	    
-	    if(barajaPlana.size()<4){
+	    if (barajaPlana.size() < 4){
 	        cout<<"\nNo quedan sufucientes cartas.\n";
+	        mano.clear();
+		    mano_dealer.clear();
+		    barajaPlana.clear();
+		    this_thread::sleep_for(chrono::milliseconds(1500));
 	        goto remezcleo;
 	    }
 		    
 	}
-	
     cout<<"Juego terminado.";
     game_over:
     getch();
