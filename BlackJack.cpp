@@ -326,19 +326,28 @@ vector<string> mezclador(vector<string> plano){
     return plano;
 }
 
-vector<string> aplanador(array<array<string,13>,4> cartas) {
-    vector<string> cartas_lineal;
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 13; j++) {
-            cartas_lineal.push_back(cartas[i][j]); 
-        }
-    }
-    return cartas_lineal;
+vector<string> aplanadorRecursivo(array<array<string,13>,4> cartas, int i = 0, int j = 0) {
+    if (i >= 4){
+    	return vector<string>();
+	}
+	
+	if (j >= 13){
+		return aplanadorRecursivo(cartas, i + 1, 0);
+	}
+	
+	vector<string> mazo;
+	mazo.push_back(cartas[i][j]);
+	
+	vector<string> restoDelMazo = aplanadorRecursivo(cartas, i, j + 1);
+	
+	mazo.insert(mazo.end(), restoDelMazo.begin(), restoDelMazo.end());
+	
+	return mazo;
 }
 
 array<array<string,13>,4> aleatorizador(array<array<string,13>,4> orden){
     vector<string> plano;
-    plano = aplanador(orden);
+    plano = aplanadorRecursivo(orden);
     plano = mezclador(plano);
     orden = constructor(plano);
     return orden;
@@ -608,7 +617,7 @@ int main(){
 	    }};
 		
 	    cartas_val = aleatorizador(cartas_val);
-	    barajaPlana = aplanador(cartas_val);
+	    barajaPlana = aplanadorRecursivo(cartas_val);
 	    
 	    bool flag = false;
 	    while(barajaPlana.size()>=4){
