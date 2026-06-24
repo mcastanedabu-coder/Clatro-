@@ -141,8 +141,8 @@ int menuMesa(){
 }
 
 vector<string> aces(vector<string>& arr){
-	//se validan los haces evaluandolos de ultimos, pasandolos a las ultimas posiciones de la mano del jugador, 
-	//para que se puedan evaluar de manera correcta, ya que los aces pueden valer 1 o 11 dependiendo del puntaje total de la mano
+	//Se validan los ases evaluandolos de ultimas, pasandolos a las ultima posici�n de la mano del jugador, 
+	//Para que se puedan evaluar de manera correcta, ya que los ases pueden valer 1 o 11 dependiendo del puntaje total de la mano
     vector<string> arr2,arr3;
     for(int i=0;i<arr.size();i++){
         string s=arr[i];
@@ -159,8 +159,9 @@ vector<string> aces(vector<string>& arr){
 }
 
 int evaluar(vector<string> arr){
-	//una vez que se tiene la mano del jugador, se evalua el puntaje de la mano del jugador,
-	// teniendo en cuenta que las cartas con valor de 10 (J,Q,K) valen 10, y los Ases pueden valer 1 o 11 dependiendo del puntaje total de la mano
+	//Una vez que se tiene la mano del jugador, se evalua su puntaje, 
+	//Teniendo en cuenta que las cartas con valor de 10 (J,Q,K) valen 10 y
+	//Los Ases pueden valer 1 o 11 dependiendo del puntaje total de la mano
 
     arr=aces(arr);
     vector<string> punt_p;
@@ -193,17 +194,20 @@ int evaluar(vector<string> arr){
 }
 
 vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,double& apuesta,double pres) {
-	//se selecciona la acción del jugador, ya sea tomar otra carta, doblar o no tomar mas cartas, y se agregan las cartas a la mano del jugador
+	//Se selecciona la accion del jugador, ya sea tomar otra carta, doblar o no tomar mas cartas
+	//Se agregan las cartas a la mano del jugador
 	string entrada;
     char comp;
     cout<<endl<<"Desea tomar otra carta? 'Y'\nDesea doblar? 'D'\nDesea no tomar mas cartas? Digite cualquier letra\nDigite su respuesta: ";
-	//tambien se define un flag para que el mensaje de la pregunta no se repita en la primera iteración del while
+	//Tambien se define un flag para que el mensaje de la pregunta
+	//No se repita en la primera iteracionn del while
     bool x=false;
     while (true) {
         if(x){
             cout <<endl<<"Desea tomar otra carta? 'Y'\nDesea doblar? 'D'\nDesea no tomar mas cartas? Digite cualquier letra\nDigite su respuesta: ";
         }
-        //se hacen las respectivas validaciones de la entrada del usuario, para que no se rompa el programa si el usuario ingresa un valor invalido
+        //Se hacen las respectivas validaciones de la entrada del usuario
+		//Para que no se rompa el programa si el usuario ingresa un valor invalido
         if(!(cin>>entrada)){
             cin.clear();
             cin.ignore(10000, '\n');
@@ -225,7 +229,8 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
         }
         
         x = true;
-        //después de validar la entrada del usuario, se agregan las cartas a la mano del jugador y se eliminan del mazo, y se imprime la mano del jugador y su puntaje
+        //Despues de validar la entrada del usuario, se agregan las cartas a la mano del jugador
+		//Y se eliminan del mazo, y se imprime la mano del jugador y su puntaje
         if (comp == conf) {
 
             if (arr.empty()) {
@@ -233,8 +238,8 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
                 break;
             }
 
-            arr2.push_back(arr.front()); // primera carta
-            arr.erase(arr.begin());      // eliminarla del mazo
+            arr2.push_back(arr.front()); // Primera carta
+            arr.erase(arr.begin());      // Eliminarla del mazo
         } else if(comp == 'D'){
             if(arr.empty()){
                 cout << "No quedan cartas.\n";
@@ -303,7 +308,8 @@ vector<string> tomarCartas(vector<string>& arr, char conf, vector<string>& arr2,
 }
 
 vector<string> pasarMano(vector<string>& arr){
-	//crea un vector que contiene las dos primeras cartas del vector de la baraja, y luego elimina esas dos cartas del vector de la baraja
+	//Crea un vector que contiene las dos primeras cartas del vector de la baraja
+	//y luego elimina esas dos cartas del vector de la baraja
     vector<string> arr2;
     arr2.push_back(arr[0]);
     arr2.push_back(arr[1]);
@@ -314,9 +320,10 @@ vector<string> pasarMano(vector<string>& arr){
 }
 
 array<array<string,13>,4> constructor(vector<string> base){
-	//se define una nueva matriz de 4x13 para reconstruir la baraja a partir del vector plano mezclado
+	//Se define una nueva matriz de 4x13 para reconstruir la baraja a partir del vector plano mezclado
     array<array<string,13>,4> valor_c;
-	//luego se reconstruye la baraja a partir del vector plano mezclado, llenando la matriz de 4x13 con las cartas en orden
+	//Luego se reconstruye la baraja a partir del vector plano mezclado
+	//llenando la matriz de 4x13 con las cartas en orden
     int indice = 0;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 13; j++) {
@@ -329,17 +336,18 @@ array<array<string,13>,4> constructor(vector<string> base){
 }
 
 vector<string> mezclador(vector<string> plano){
-	// se crea un generador de numeros aleatorios para mezclar el plano de la baraja, es decir, el vector que contiene todas las cartas de la baraja en un solo arreglo
+	//Se crea un generador de numeros aleatorios para mezclar el plano de la baraja
+	//Es decir, el vector que contiene todas las cartas de la baraja en un solo arreglo
     random_device rd;
     unsigned t = chrono::high_resolution_clock::now().time_since_epoch().count();
     mt19937 g(rd() ^ t);
-	// la funcion shuffle() mezcla el vector plano de manera aleatoria
+	//la funcion shuffle() mezcla el vector plano de manera aleatoria
     shuffle(plano.begin(), plano.end(), g);
     return plano;
 }
 
 vector<string> aplanadorRecursivo(array<array<string,13>,4> cartas, int i = 0, int j = 0) {
-	// se aplana la baraja de cartas, es decir, se pasa de un arreglo de 4x13 a un vector de 52 cartas
+	//Se aplana la baraja de cartas, es decir, se pasa de un arreglo de 4x13 a un vector de 52 cartas
     if (i >= 4){
     	return vector<string>();
 	}
@@ -359,16 +367,17 @@ vector<string> aplanadorRecursivo(array<array<string,13>,4> cartas, int i = 0, i
 }
 
 array<array<string,13>,4> aleatorizador(array<array<string,13>,4> orden){
-	// se define un vector que sera el plano de la baraja, es decir, un vector que contenga todas las cartas de la baraja en un solo arreglo
+	//Se define un vector que sera el plano de la baraja, es decir
+	//Un vector que contenga todas las cartas de la baraja en un solo arreglo
     vector<string> plano;
-	// se llama a las distintas funciones para aplanar, mezclar y reconstruir la baraja
+	//Se llama a las distintas funciones para aplanar, mezclar y reconstruir la baraja
     plano = aplanadorRecursivo(orden);
     plano = mezclador(plano);
     orden = constructor(plano);
     return orden;
 }
 
-//Codigo para la M�sica del Juego
+//Codigo para la Musica del Juego
 string playlist[] = {"music/cancion2.mp3", "music/cancion1.mp3", "music/cancion3.mp3"};
 int totalCanciones = 3;
 int cancionActual = 0;
@@ -383,9 +392,9 @@ void reproducirMusica(){
 	detenerMusica();
 	
 	/*
-	- Se abre la canci�n acutal y se le apoda "musica" para que el MCI la pueda controlar
-	- type mpegvideo: le cuenta al sistema que el archivo a abrir es un audio o video comprimido (MP3 � MP4)
-	- alias musica: se le asigna el alias de musica a la canci�n actual para no tener que ingresar la ruta de
+	- Se abre la cancion acutal y se le apoda "musica" para que el MCI la pueda controlar
+	- type mpegvideo: le cuenta al sistema que el archivo a abrir es un audio o video comprimido (MP3, MP4)
+	- alias musica: se le asigna el alias de musica a la cancion actual para no tener que ingresar la ruta de
 	nombre todas las veces que nos queramos referir a ese archivo
 	*/
 	
@@ -393,7 +402,7 @@ void reproducirMusica(){
 	
 	/*
 	- .c_str() -> convierte un "objeto moderno" (ej. string) en un arreglo tradicional de caracteres
-	- Como windows est� montado sobre C, es necesario hacer esta traducci�n para que el codigo pueda leer
+	- Como windows esta montado sobre C, es necesario hacer esta traduccion para que el codigo pueda leer
 	la ruta del archivo sin problema, ya que C no reconoce strings, solo arreglos de caracteres
 	*/
 	
@@ -401,12 +410,12 @@ void reproducirMusica(){
 	mciSendString("play musica", NULL, 0, NULL);
 }
 
-//Esta funci�n permite que el juego use la playlist para reproducir la m�sica
+//Esta funcion permite que el juego use la playlist para reproducir la musica
 void revisarLoopMusica(){
 	
 	/*
 	- Este buffer permite recibir el dato que windows nos de con respecto al estado del archivo
-	si est� detenido manda un "stopped", reproduciendo un "playing", etc. Con el fin de guardar
+	si esta detenido manda un "stopped", reproduciendo un "playing", etc. Con el fin de guardar
 	el estado del archivo, se crea un buffer de 128 bytes que sea lo suficientemente grande para guardar
 	las palabras clave que mande el MCI de windows, ya que por letra es un byte y por palabras entre 7 y 8 bytes
 	*/
@@ -423,12 +432,12 @@ void revisarLoopMusica(){
 			cancionActual = 0;
 		}
 		
-		//Reproduce la canci�n con el nuevo indice (la siguiente canci�n o el bucle)
+		//Reproduce la cancion con el nuevo indice (la siguiente cancion o el bucle)
 		reproducirMusica();
 	}
 }
 
-//Funci�n que guarda historial, punto de guardado y muestra men� de opciones
+//Funcion que guarda historial, punto de guardado y muestra menu de opciones
 //Devuelve: 0=continuar, 1=reset, 2=guardar y continuar, 3=guardar y salir, 4=salir
 int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta, 
                                int puntajeJug, int puntajeCrup, 
@@ -459,7 +468,7 @@ int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta,
 		historialFile.close();
 	}
 	
-	//PARTE 2: Mostrar menú de opciones (misma lógica que opcionesGenerales)
+	//PARTE 2: Mostrar menu de opciones (misma logica que opcionesGenerales)
 	int opcion = 0;
 	while(true){
 		cout<<"Que desea hacer?\n";
@@ -512,7 +521,7 @@ int guardarHistorialYOpciones(int mesaNum, int numeroPartida, double apuesta,
 			}
 		}
 		
-		//PARTE 4: Devolver opción según acción
+		//PARTE 4: Devolver opcion según acción
 		if(opcion == 1) return 0;      //Continuar
 		else if(opcion == 2) return 1; //Reset
 		else if(opcion == 3) return 2; //Guardar y continuar
@@ -582,7 +591,7 @@ int main(){
 		        data >> etiqueta >> saveSaldo;
 		        presupuesto = saveSaldo;
 		        loadFile.close();
-		        if (presupuesto < 5){ // 5 es el m�nimo para poder apostar el 5% de 100
+		        if (presupuesto < 5){ // 5 es el minimo para poder apostar el 5% de 100
 					cout << "El archivo de guardado registra un saldo insuficiente ($" << presupuesto << ").\n";
 					cout << "Redireccionando a la seleccion de mesa...\n";
 					this_thread::sleep_for(chrono::milliseconds(2500));
@@ -696,8 +705,6 @@ int main(){
 	            default:
 	                break;
 	            }
-	            //cout<<mano[i]<<" ";
-	        
 	        }
 	        
 	        revisarLoopMusica();
@@ -736,15 +743,14 @@ int main(){
 	                break;
 	            }
 	    
-	        // tomar mas cartas
+	        //Tomar mas cartas
 	        revisarLoopMusica();
 	        int puntaje_p=evaluar(mano);
 	        cout<<"\nTu puntaje: "<<puntaje_p<<endl;
 	
 	        mano=tomarCartas(barajaPlana,'Y',mano, apuesta,presupuesto);
 	        
-	        //evaluar puntajes
-	
+	        //Evaluar puntajes
 	        puntaje_p = evaluar(mano);
 	        
 	        puntaje_c = evaluar(mano_dealer);
@@ -831,7 +837,7 @@ int main(){
 	        
 			int accionPartida = guardarHistorialYOpciones(1, 1, apuesta, puntaje_p, puntaje_c, saldoAnterior, presupuesto);        
 			
-	        if (accionPartida == 1) { // Opci�n 2 del men�: Resetear Juego
+	        if (accionPartida == 1) { // Opcion 2 del menu: Resetear Juego
 	        	cout<<"\033[2J\033[3J\033[H"<<flush;
 	            goto invalidModeInput;
 	        } 
@@ -839,7 +845,7 @@ int main(){
 	            cout << "Regresando al menu principal...\n";
 	            this_thread::sleep_for(chrono::milliseconds(1500));
 	            cout<<"\033[2J\033[3J\033[H"<<flush;
-	            break; // Rompe el bucle de la partida y vuelve al men� de inicio del juego
+	            break; // Rompe el bucle de la partida y vuelve al menu de inicio del juego
 	        }
 	        
 	        mano.clear();
