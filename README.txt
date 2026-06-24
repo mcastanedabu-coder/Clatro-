@@ -6,8 +6,6 @@ Este proyecto es una recreación del clásico juego de casino Blackjack o Veinti
 
 Estas instrucciones le permitirán obtener una copia del proyecto en funcionamiento en una máquina local para propósitos de juego, desarrollo o pruebas.
 
-Se puede consultar la sección de Despliegue para conocer cómo distribuir el proyecto.
-
 ## Pre-requisitos 
 
 Se requiere un compilador capaz de interpretar el lenguaje C++. Se recomienda el uso de un entorno de desarrollo integrado como Dev-C++ o cualquier entorno configurado con el compilador GCC/MinGW en un sistema operativo Windows, debido a las librerías nativas empleadas.
